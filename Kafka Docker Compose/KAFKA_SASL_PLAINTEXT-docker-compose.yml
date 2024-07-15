@@ -1,0 +1,71 @@
+version: '3.4'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${ZOOKEEPER_IMAGE_TAG}
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - ${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}
+
+  
+  kafka0:
+    image: confluentinc/cp-kafka:${KAFKA_IMAGE_TAG}
+    depends_on:
+      - zookeeper
+    ports:
+      - ${KAFKA_BROKER_ONE_PORT}:${KAFKA_BROKER_ONE_PORT}
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${ZOOKEEPER_CLIENT_PORT}'
+      ZOOKEEPER_SASL_ENABLED: 'false'
+      KAFKA_ADVERTISED_LISTENERS: ${SECURITY_PROTOCOL}://${PUBLIC_IP}:${KAFKA_BROKER_ONE_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${SECURITY_PROTOCOL}:${SECURITY_PROTOCOL}
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: ${SECURITY_PROTOCOL}
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: ${KAFKA_SASL_MECHANISMS}
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/configs/kafka_server_jaas.conf"
+    volumes:
+      - ./configs:/etc/kafka/configs
+
+  kafka1:
+    image: confluentinc/cp-kafka:${KAFKA_IMAGE_TAG}
+    depends_on:
+      - zookeeper
+    ports:
+      - ${KAFKA_BROKER_TWO_PORT}:${KAFKA_BROKER_TWO_PORT}
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${ZOOKEEPER_CLIENT_PORT}'
+      ZOOKEEPER_SASL_ENABLED: 'false'
+      KAFKA_ADVERTISED_LISTENERS: "${SECURITY_PROTOCOL}://${PUBLIC_IP}:${KAFKA_BROKER_TWO_PORT}"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${SECURITY_PROTOCOL}:${SECURITY_PROTOCOL}
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: ${SECURITY_PROTOCOL}
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: ${KAFKA_SASL_MECHANISMS}
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/configs/kafka_server_jaas.conf"
+    volumes:
+      - ./configs:/etc/kafka/configs
+
+  kafka2:
+    image: confluentinc/cp-kafka:${KAFKA_IMAGE_TAG}
+    depends_on:
+      - zookeeper
+    ports:
+      - ${KAFKA_BROKER_THREE_PORT}:${KAFKA_BROKER_THREE_PORT}
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${ZOOKEEPER_CLIENT_PORT}'
+      ZOOKEEPER_SASL_ENABLED: 'false'
+      KAFKA_ADVERTISED_LISTENERS: ${SECURITY_PROTOCOL}://${PUBLIC_IP}:${KAFKA_BROKER_THREE_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${SECURITY_PROTOCOL}:${SECURITY_PROTOCOL}
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: ${SECURITY_PROTOCOL}
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: ${KAFKA_SASL_MECHANISMS}
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/configs/kafka_server_jaas.conf"
+    volumes:
+      - ./configs:/etc/kafka/configs
+
+
+#docker-compose --env-file ./configs/.env.dev -f KAFKA_SASL_PLAINTEXT-docker-compose.yml up

@@ -3,7 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from kafka_producer import KafkaProducer
 
-KAFKA_BOOTSTRAP_SERVER = '172.20.129.207:9095,172.20.129.207:9094,172.20.129.207:9093'
+KAFKA_BOOTSTRAP_SERVER = '192.168.3.99:9097,192.168.3.99:9098,192.168.3.99:9099'
 KAFKA_API_KEY = 'theengineroom'
 KAFKA_API_SECRET = "1tY=ZP43t20"
 
